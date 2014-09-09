@@ -1,4 +1,4 @@
-using System.Linq;
+п»їusing System.Linq;
 using System;
 using Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk.Model;
 
@@ -14,24 +14,24 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
         public void Move(Hockeyist self, World world, Game game, Move move)
         {
 
-            if (ШайбаВМоейКоманде(self, world))
+            if (РЁР°Р№Р±Р°Р’РњРѕРµР№РљРѕРјР°РЅРґРµ(self, world))
             {
 
-                if (ШайбаУМеня(self, world))
+                if (РЁР°Р№Р±Р°РЈРњРµРЅСЏ(self, world))
                 {
-                    if (УдачныйМомент(self, world))
+                    if (РЈРґР°С‡РЅС‹Р№РњРѕРјРµРЅС‚(self, world))
                     {
-                        УдарПоВоротам(self, world, move);
+                        РЈРґР°СЂРџРѕР’РѕСЂРѕС‚Р°Рј(self, world, move);
                     }
                     else
                     {
-                        ДатьПасс(self, world, move);
+                        Р”Р°С‚СЊРџР°СЃСЃ(self, world, move);
                     }
                 }
                 else
                 {
 
-                    ПерейтиНаДругуюСторонуПоля(self, world, move);
+                    РџРµСЂРµР№С‚РёРќР°Р”СЂСѓРіСѓСЋРЎС‚РѕСЂРѕРЅСѓРџРѕР»СЏ(self, world, move);
 
                 }
 
@@ -40,70 +40,70 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
             }
             else
             {
-                ЛовитьШайбу(self, world, move);
+                Р›РѕРІРёС‚СЊРЁР°Р№Р±Сѓ(self, world, move);
             }
 
         }
 
-        private void ДатьПасс(Hockeyist self, World world, Model.Move move)
+        private void Р”Р°С‚СЊРџР°СЃСЃ(Hockeyist self, World world, Model.Move move)
         {
             move.PassPower = 1.0D;
-            move.PassAngle = self.GetAngleTo(ИгрокГотовПринять(self, world, move));
+            move.PassAngle = self.GetAngleTo(РРіСЂРѕРєР“РѕС‚РѕРІРџСЂРёРЅСЏС‚СЊ(self, world, move));
             move.Action = ActionType.Pass;
         }
 
-        private Hockeyist ИгрокГотовПринять(Hockeyist self, World world, Model.Move move)
+        private Hockeyist РРіСЂРѕРєР“РѕС‚РѕРІРџСЂРёРЅСЏС‚СЊ(Hockeyist self, World world, Model.Move move)
         {
 
-            var ИщемСвоего = from Hockeyist игрок in world.Hockeyists where игрок.Id != self.Id && игрок.IsTeammate select игрок;
-            return ИщемСвоего.FirstOrDefault();
+            var РС‰РµРјРЎРІРѕРµРіРѕ = from Hockeyist РёРіСЂРѕРє in world.Hockeyists where РёРіСЂРѕРє.Id != self.Id && РёРіСЂРѕРє.IsTeammate select РёРіСЂРѕРє;
+            return РС‰РµРјРЎРІРѕРµРіРѕ.FirstOrDefault();
         }
 
-        private bool УдачныйМомент(Hockeyist self, World world)
+        private bool РЈРґР°С‡РЅС‹Р№РњРѕРјРµРЅС‚(Hockeyist self, World world)
         {
-            ПолучитьТочкуУдараПоВоротам(self, world, out netX, out netY);
-            return (КтоНаЛинииОгня(self, world, netX, netY) == null);
+            РџРѕР»СѓС‡РёС‚СЊРўРѕС‡РєСѓРЈРґР°СЂР°РџРѕР’РѕСЂРѕС‚Р°Рј(self, world, out netX, out netY);
+            return (РљС‚РѕРќР°Р›РёРЅРёРёРћРіРЅСЏ(self, world, netX, netY) == null);
         }
 
-        private Hockeyist КтоНаЛинииОгня(Hockeyist self, World world, double x, double y)
+        private Hockeyist РљС‚РѕРќР°Р›РёРЅРёРёРћРіРЅСЏ(Hockeyist self, World world, double x, double y)
         {
 
-            var Ищем = from Hockeyist игрок in world.Hockeyists where !игрок.IsTeammate && игрок.Id != self.Id && НаЛинии(self, x, y, игрок, world.Puck.Radius) select игрок;
-            return Ищем.FirstOrDefault();
+            var РС‰РµРј = from Hockeyist РёРіСЂРѕРє in world.Hockeyists where !РёРіСЂРѕРє.IsTeammate && РёРіСЂРѕРє.Id != self.Id && РќР°Р›РёРЅРёРё(self, x, y, РёРіСЂРѕРє, world.Puck.Radius) select РёРіСЂРѕРє;
+            return РС‰РµРј.FirstOrDefault();
 
         }
 
-        private bool НаЛинии(Hockeyist self, double x, double y, Hockeyist игрок, double p)
+        private bool РќР°Р›РёРЅРёРё(Hockeyist self, double x, double y, Hockeyist РёРіСЂРѕРє, double p)
         {
-            double ty = self.Y + ((игрок.X - x) * (y - self.Y)) / (x - self.X);
-            return Math.Abs(ty - игрок.Y) < игрок.Radius;
+            double ty = self.Y + ((РёРіСЂРѕРє.X - x) * (y - self.Y)) / (x - self.X);
+            return Math.Abs(ty - РёРіСЂРѕРє.Y) < РёРіСЂРѕРє.Radius;
         }
 
 
 
-        private void ПерейтиНаДругуюСторонуПоля(Hockeyist self, World world, Model.Move move)
+        private void РџРµСЂРµР№С‚РёРќР°Р”СЂСѓРіСѓСЋРЎС‚РѕСЂРѕРЅСѓРџРѕР»СЏ(Hockeyist self, World world, Model.Move move)
         {
             Player opponentPlayer = world.GetOpponentPlayer();
             double netX = opponentPlayer.NetFront;
-            double УШайба = world.Puck.Y;
+            double РЈРЁР°Р№Р±Р° = world.Puck.Y;
             double netY = (0.5D * (opponentPlayer.NetBottom + opponentPlayer.NetTop));
 
             move.SpeedUp = 1.0D;
-            move.Turn = (self.GetAngleTo(netX, (УШайба > netY) ? 0 : world.Height));
+            move.Turn = (self.GetAngleTo(netX, (РЈРЁР°Р№Р±Р° > netY) ? 0 : world.Height));
             move.Action = ActionType.TakePuck;
         }
 
-        private bool ШайбаУМеня(Hockeyist self, World world)
+        private bool РЁР°Р№Р±Р°РЈРњРµРЅСЏ(Hockeyist self, World world)
         {
             return world.Puck.OwnerHockeyistId == self.Id;
         }
 
-        private bool ШайбаВМоейКоманде(Hockeyist self, World world)
+        private bool РЁР°Р№Р±Р°Р’РњРѕРµР№РљРѕРјР°РЅРґРµ(Hockeyist self, World world)
         {
             return world.Puck.OwnerPlayerId == self.PlayerId;
         }
 
-        private void УдарПоВоротам(Hockeyist self, World world, Move move)
+        private void РЈРґР°СЂРџРѕР’РѕСЂРѕС‚Р°Рј(Hockeyist self, World world, Move move)
         {
             if (self.State == HockeyistState.Swinging)
             {
@@ -122,18 +122,18 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
 
         }
 
-        private void ПолучитьТочкуУдараПоВоротам(Hockeyist self, World world, out double x, out double y)
+        private void РџРѕР»СѓС‡РёС‚СЊРўРѕС‡РєСѓРЈРґР°СЂР°РџРѕР’РѕСЂРѕС‚Р°Рј(Hockeyist self, World world, out double x, out double y)
         {
             Player opponentPlayer = world.GetOpponentPlayer();
-            double ближВерх = self.GetDistanceTo(opponentPlayer.NetFront, opponentPlayer.NetTop);
-            double ближНиз = self.GetDistanceTo(opponentPlayer.NetFront, opponentPlayer.NetBottom);
+            double Р±Р»РёР¶Р’РµСЂС… = self.GetDistanceTo(opponentPlayer.NetFront, opponentPlayer.NetTop);
+            double Р±Р»РёР¶РќРёР· = self.GetDistanceTo(opponentPlayer.NetFront, opponentPlayer.NetBottom);
             double mix = 5.0D;
-            if (ближВерх > ближНиз) mix = -5.0D;
+            if (Р±Р»РёР¶Р’РµСЂС… > Р±Р»РёР¶РќРёР·) mix = -5.0D;
             x = 0.5D * (opponentPlayer.NetBack + opponentPlayer.NetFront);
             y = (0.5D * (opponentPlayer.NetBottom + opponentPlayer.NetTop)) + mix;
         }
 
-        private void ЛовитьШайбу(Hockeyist self, World world, Move move)
+        private void Р›РѕРІРёС‚СЊРЁР°Р№Р±Сѓ(Hockeyist self, World world, Move move)
         {
             move.SpeedUp = 1.0D;
             move.Turn = (self.GetAngleTo(world.Puck));
