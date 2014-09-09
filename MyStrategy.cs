@@ -14,7 +14,7 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
         public void Move(Hockeyist self, World world, Game game, Move move)
         {
 
-            if (ШайбаВМоейКоманде(self, world))
+            if (ШайбаУМоейКоманды(self, world))
             {
 
                 if (ШайбаУМеня(self, world))
@@ -107,7 +107,7 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
             return world.Puck.OwnerHockeyistId == self.Id;
         }
 
-        private bool ШайбаВМоейКоманде(Hockeyist self, World world)
+        private bool ШайбаУМоейКоманды(Hockeyist self, World world)
         {
             return world.Puck.OwnerPlayerId == self.PlayerId;
         }
@@ -132,8 +132,8 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
 
             if (Math.Abs(angleToNet) < STRIKE_ANGLE)
             {
-                //
-                //move.Action = ActionType.Strike;
+                
+                move.Action = ActionType.Strike;
 
             }
 
@@ -144,9 +144,10 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
             Player opponentPlayer = world.GetOpponentPlayer();
             double ближВерх = self.GetDistanceTo(opponentPlayer.NetFront, opponentPlayer.NetTop);
             double ближНиз = self.GetDistanceTo(opponentPlayer.NetFront, opponentPlayer.NetBottom);
-            double mix = 15.0D;
-            if (ближВерх > ближНиз) mix = -15.0D;
-            x = 0.5D * (opponentPlayer.NetBack + opponentPlayer.NetFront);
+			double mix = (opponentPlayer.NetBottom - opponentPlayer.NetTop)/4.0D;
+
+            if (ближВерх > ближНиз) mix = -mix;
+            x = opponentPlayer.NetFront;
             y = (0.5D * (opponentPlayer.NetBottom + opponentPlayer.NetTop)) + mix;
         }
 
