@@ -1,0 +1,4 @@
+C:\SourceCodes\csharp-cgdk\bin\Debug\csharp-cgdk.exe
+C:\SourceCodes\csharp-cgdk\bin\Debug\csharp-cgdk.pdb
+C:\SourceCodes\csharp-cgdk\obj\Debug\csharp-cgdk.exe
+C:\SourceCodes\csharp-cgdk\obj\Debug\csharp-cgdk.pdb
