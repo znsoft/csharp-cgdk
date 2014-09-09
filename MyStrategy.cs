@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System;
 using Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk.Model;
 
@@ -21,6 +21,7 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
                 {
                     if (УдачныйМомент(self, world))
                     {
+						Сообщить(self.Id.ToString()+" Атака");
                         УдарПоВоротам(self, world, move);
                     }
                     else
@@ -32,30 +33,36 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
                 {
 
                     ПерейтиНаДругуюСторонуПоля(self, world, move);
-
+					Сообщить(self.Id.ToString()+" Переход");
                 }
-
-
 
             }
             else
             {
-                ЛовитьШайбу(self, world, move);
+                ДогнатьШайбу(self, world, move);
+				Сообщить(self.Id.ToString());
             }
 
         }
 
+		private void Сообщить(string Строка){
+		
+				System.Console.WriteLine(Строка);
+		}
+
         private void ДатьПасс(Hockeyist self, World world, Model.Move move)
         {
             move.PassPower = 1.0D;
-            move.PassAngle = self.GetAngleTo(ИгрокГотовПринять(self, world, move));
+			Hockeyist ПринимающийИгрок = ИгрокГотовПринять(self, world, move);
+				move.PassAngle = self.GetAngleTo(ПринимающийИгрок);
             move.Action = ActionType.Pass;
+			if(ПринимающийИгрок != null)Сообщить(self.Id.ToString()+" Пассую "+ ПринимающийИгрок.Id.ToString());
         }
 
         private Hockeyist ИгрокГотовПринять(Hockeyist self, World world, Model.Move move)
         {
 
-            var ИщемСвоего = from Hockeyist игрок in world.Hockeyists where игрок.Id != self.Id && игрок.IsTeammate select игрок;
+			var ИщемСвоего = from Hockeyist игрок in world.Hockeyists where игрок.Id != self.Id && игрок.IsTeammate && игрок.Type != HockeyistType.Defenceman  select игрок;
             return ИщемСвоего.FirstOrDefault();
         }
 
@@ -69,7 +76,9 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
         {
 
             var Ищем = from Hockeyist игрок in world.Hockeyists where !игрок.IsTeammate && игрок.Id != self.Id && НаЛинии(self, x, y, игрок, world.Puck.Radius) select игрок;
-            return Ищем.FirstOrDefault();
+			Hockeyist ИгрокНаПути = Ищем.FirstOrDefault();
+			if(ИгрокНаПути != null)Сообщить("y "+self.Id.ToString()+" Игрок на пути "+ИгрокНаПути.Id.ToString());
+				return ИгрокНаПути;
 
         }
 
@@ -114,10 +123,18 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
 
             double angleToNet = self.GetAngleTo(netX, netY);
             move.Turn = angleToNet;
+			move.Action = ActionType.Swing;
+
+
+			move.PassPower = 1.0D;
+			move.PassAngle = self.GetAngleTo(netX, netY);
+			move.Action = ActionType.Pass;
+
             if (Math.Abs(angleToNet) < STRIKE_ANGLE)
             {
-                //                move.Action = ActionType.Swing;
-                move.Action = ActionType.Strike;
+                //
+                //move.Action = ActionType.Strike;
+
             }
 
         }
@@ -127,13 +144,13 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
             Player opponentPlayer = world.GetOpponentPlayer();
             double ближВерх = self.GetDistanceTo(opponentPlayer.NetFront, opponentPlayer.NetTop);
             double ближНиз = self.GetDistanceTo(opponentPlayer.NetFront, opponentPlayer.NetBottom);
-            double mix = 5.0D;
-            if (ближВерх > ближНиз) mix = -5.0D;
+            double mix = 15.0D;
+            if (ближВерх > ближНиз) mix = -15.0D;
             x = 0.5D * (opponentPlayer.NetBack + opponentPlayer.NetFront);
             y = (0.5D * (opponentPlayer.NetBottom + opponentPlayer.NetTop)) + mix;
         }
 
-        private void ЛовитьШайбу(Hockeyist self, World world, Move move)
+        private void ДогнатьШайбу(Hockeyist self, World world, Move move)
         {
             move.SpeedUp = 1.0D;
             move.Turn = (self.GetAngleTo(world.Puck));
