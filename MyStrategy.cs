@@ -25,7 +25,7 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
 
                 if (ШайбаУМеня(self, world))
                 {
-                    
+
                     if (НахожусьВУдачномМесте(self))
                     {
 
@@ -41,7 +41,7 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
                     }
                     else
                     {
-                        
+
                         ЗанятьУдачнуюПозициюНаПоле(self, world, move);
                         if (НахожусьВообщеДалеко(self)) ДатьПасс(self, world, move);
 
@@ -118,7 +118,7 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
 
             var Ищем = from Hockeyist игрок in world.Hockeyists where !игрок.IsTeammate && игрок.Id != self.Id && НаЛинии(self, x, y, игрок, world.Puck.Radius) select игрок;
             Hockeyist ИгрокНаПути = Ищем.FirstOrDefault();
-            if (ИгрокНаПути != null) Сообщить("y " + self.Id.ToString() + " Игрок на пути " + ИгрокНаПути.Id.ToString());
+            if (ИгрокНаПути != null) Сообщить("y " + self.Id.ToString() + " Игрок " + ИгрокНаПути.Id.ToString() + " на пути");
             return ИгрокНаПути;
 
         }
@@ -139,7 +139,16 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
                 double angleToNet = self.GetAngleTo(netX, netY);
                 move.Turn = angleToNet;
                 move.SpeedUp = 0.0D;
-                if (!ШайбаУМеня(self, world)) move.SpeedUp = -0.5D;
+                if (!ШайбаУМеня(self, world))
+                {
+                    move.SpeedUp = -0.5D;
+                    if (ВрагиБлизко(self, world, 0.0D)) move.Action = ActionType.Strike;
+                }
+                else {
+                    if (ВрагиБлизко(self, world, 0.0D)) move.SpeedUp = -1.0D;
+                
+                
+                }
                 Сообщить("y " + self.Id.ToString() + " Подготовка");
 
             }
@@ -199,6 +208,12 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
 
         }
 
+        private bool ВрагиБлизко(Hockeyist self, World world,double r)
+        {
+            var Ищем = from Hockeyist игрок in world.Hockeyists where !игрок.IsTeammate && ((Math.Abs(self.X - игрок.X) - (self.Radius + игрок.Radius)) < (r)) && ((Math.Abs(self.Y - игрок.Y) - (self.Radius + игрок.Radius)) < (r)) select игрок;
+            return Ищем.FirstOrDefault() != null;
+        }
+
         private bool ВрагиБлизко(Hockeyist self, World world)
         {
             var Ищем = from Hockeyist игрок in world.Hockeyists where !игрок.IsTeammate && ((Math.Abs(self.X - игрок.X) - (self.Radius + игрок.Radius)) < (self.Radius + игрок.Radius)) && ((Math.Abs(self.Y - игрок.Y) - (self.Radius + игрок.Radius)) < (self.Radius + игрок.Radius)) select игрок;
@@ -219,11 +234,14 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
 
         private void ДогнатьШайбу(Hockeyist self, World world, Move move)
         {
-            ИдтиКЦели(self, move, world.Puck);
+
+
+
+            ИдтиКЦели(self, move, world.Puck.SpeedX * world.Puck.Radius + world.Puck.X, world.Puck.SpeedY * world.Puck.Radius + world.Puck.Y);
             move.Action = ActionType.TakePuck;
         }
 
-        
+
 
     }
 }
