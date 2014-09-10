@@ -14,11 +14,12 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
         private double УдачноеX;
         private double УдачноеY;
         private double УдачныйРадиус;
-
+        Game g_game;
+        World w_orld;
 
         public void Move(Hockeyist self, World world, Game game, Move move)
         {
-
+            g_game = game; w_orld = world;
             if (ШайбаУМоейКоманды(self, world))
             {
                 ПолучитьУдачноеРасположение(world);
@@ -57,7 +58,6 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
             else
             {
                 ДогнатьШайбу(self, world, move);
-                Сообщить(self.Id.ToString());
             }
 
         }
@@ -85,8 +85,8 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
 
         private void Сообщить(string Строка)
         {
-
-            System.Console.WriteLine(Строка);
+            if ((w_orld.Tick & 1) == 1)
+                System.Console.Out.WriteLine(Строка);
         }
 
         private bool ДатьПасс(Hockeyist self, World world, Model.Move move)
@@ -103,7 +103,7 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
         private Hockeyist ИгрокГотовПринять(Hockeyist self, World world, Model.Move move)
         {
 
-            var ИщемСвоего = from Hockeyist игрок in world.Hockeyists where игрок.Id != self.Id && игрок.IsTeammate && игрок.Type != HockeyistType.Defenceman && КтоНаЛинииОгня(self, world, игрок.X, игрок.Y) == null select игрок;
+            var ИщемСвоего = from Hockeyist игрок in world.Hockeyists where игрок.Id != self.Id && игрок.IsTeammate && игрок.Type != HockeyistType.Goalie && КтоНаЛинииОгня(self, world, игрок.X, игрок.Y) == null select игрок;
             return ИщемСвоего.FirstOrDefault();
         }
 
@@ -223,19 +223,21 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
         private void ПолучитьТочкуУдараПоВоротам(Hockeyist self, World world, out double x, out double y)
         {
             Player opponentPlayer = world.GetOpponentPlayer();
-            double ближВерх = self.GetDistanceTo(opponentPlayer.NetFront, opponentPlayer.NetTop);
-            double ближНиз = self.GetDistanceTo(opponentPlayer.NetFront, opponentPlayer.NetBottom);
-            double mix = (opponentPlayer.NetBottom - opponentPlayer.NetTop) / 4.0D;
-
-            if (ближВерх > ближНиз) mix = -mix;
+            var Вратарь = (from Hockeyist игрок in world.Hockeyists where !игрок.IsTeammate && игрок.Type == HockeyistType.Goalie select игрок).FirstOrDefault();
             x = opponentPlayer.NetFront;
-            y = (0.5D * (opponentPlayer.NetBottom + opponentPlayer.NetTop)) + mix;
+            double СерединаВорот = (0.5D * (opponentPlayer.NetBottom + opponentPlayer.NetTop));
+            if (Вратарь != null)
+            {
+                y = (Вратарь.Y < СерединаВорот) ? opponentPlayer.NetBottom + 1.0D : opponentPlayer.NetTop - 1.0D;
+            }
+            else
+            {
+                y = (0.5D * (opponentPlayer.NetBottom + opponentPlayer.NetTop));
+            }
         }
 
         private void ДогнатьШайбу(Hockeyist self, World world, Move move)
         {
-
-
 
             ИдтиКЦели(self, move, world.Puck.SpeedX * world.Puck.Radius + world.Puck.X, world.Puck.SpeedY * world.Puck.Radius + world.Puck.Y);
             move.Action = ActionType.TakePuck;
