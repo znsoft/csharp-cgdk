@@ -78,7 +78,7 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
 
         private void ПолучитьРасположениеМоихВорот(World world)
         {
-            throw new NotImplementedException();
+            
         }
 
         private void БежатьЗащищатьВорота(Hockeyist self, World world, Model.Move move)
@@ -89,7 +89,7 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
         private bool ЯБлижеДругихКШайбе(Hockeyist self, World world)
         {
            
-
+		return false;
 
         }
 
