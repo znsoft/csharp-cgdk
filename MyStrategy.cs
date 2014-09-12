@@ -17,14 +17,19 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
 		private double УдачноеY;
 		private double УдачныйРадиусY;
 		private double УдачныйРадиусX;
+        private double УворотX;
+        private double УворотY;
 		Game g_game;
 		World w_orld;
 		Hockeyist s_elf;
+        Hockeyist МойВратарь;
+       
 
 		public void Move(Hockeyist self, World world, Game game, Move move)
 		{
 			s_elf = self;
 			g_game = game; w_orld = world;
+            ПолучитьРасположениеМоихВорот(world);
 			if (ШайбаУМоейКоманды(self, world))
 			{
 				ПолучитьУдачноеРасположение(world);
@@ -62,10 +67,33 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
 			}
 			else
 			{
-				ДогнатьШайбу(self, world, move);
+                if (ЯБлижеДругихКШайбе(self, world)) { ДогнатьШайбу(self, world, move); } else {
+
+                    БежатьЗащищатьВорота(self, world, move);
+                
+                }
 			}
 
 		}
+
+        private void ПолучитьРасположениеМоихВорот(World world)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void БежатьЗащищатьВорота(Hockeyist self, World world, Model.Move move)
+        {
+            
+        }
+
+        private bool ЯБлижеДругихКШайбе(Hockeyist self, World world)
+        {
+           
+
+
+        }
+
+
 
 		void БежатьКСвоимВоротам (Hockeyist self, World world, Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk.Model.Move move)
 		{
