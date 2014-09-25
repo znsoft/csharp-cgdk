@@ -143,6 +143,7 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
 
         private void ПолучитьРасположениеМоихВорот()
         {
+<<<<<<< HEAD
             Player my = Мир.GetMyPlayer();
             double x = my.NetFront;
             double Netshift = 1.5D * s_elf.Radius;
@@ -168,6 +169,9 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
             УдачноеX = (ЦентрПоляХ + УдачноеX) * 0.5D;
             УдачныйРадиусX = Math.Abs(Мир.Width / 12.0D);
             //УдачноеX = (УдачноеX + ЦентрПоляХ) * 0.5D;
+=======
+            
+>>>>>>> origin/master
         }
 
         private void ПолучитьТочкуУдараПоВоротам(out double x, out double y)
@@ -582,6 +586,7 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
             move.Action = ActionType.TakePuck;
             double Y = ЦентрПоляY;
            
+<<<<<<< HEAD
             if (МойВратарь != null)
             {
                 Y = ЦентрПоляY - (МойВратарь.Y - ЦентрПоляY) * 0.6D;
@@ -715,6 +720,9 @@ namespace Com.CodeGame.CodeHockey2014.DevKit.CSharpCgdk
 
         }
 
+=======
+		return false;
+>>>>>>> origin/master
 
         private bool ДатьПасс(Hockeyist self, World world, Model.Move move)
         {
